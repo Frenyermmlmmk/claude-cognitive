@@ -270,7 +270,7 @@ claude-cognitive/
 
 Need multi-team coordination, compliance features, or custom setup?
 
-**Contact:** enterprise@mirrorethic.com
+**Contact:** gsutherland@mirrorethic.com
 
 **Services available:**
 - Custom implementation for your codebase
