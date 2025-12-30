@@ -137,5 +137,5 @@ See [LICENSE](./LICENSE) for full text.
 
 ---
 
-[Unreleased]: https://github.com/mirrorethic/claude-cognitive/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/mirrorethic/claude-cognitive/releases/tag/v1.0.0
+[Unreleased]: https://github.com/GMaN1911/claude-cognitive/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/GMaN1911/claude-cognitive/releases/tag/v1.0.0

@@ -69,7 +69,7 @@ Files **decay** when not mentioned, **activate** on keywords, and **co-activate*
 ```bash
 # Clone to your home directory
 cd ~
-git clone https://github.com/mirrorethic/claude-cognitive.git .claude-cognitive
+git clone https://github.com/GMaN1911/claude-cognitive.git .claude-cognitive
 
 # Copy scripts
 cp -r .claude-cognitive/scripts ~/.claude/scripts/
@@ -328,7 +328,7 @@ MIT License - see [LICENSE](./LICENSE)
 Issues and PRs welcome!
 
 **Before submitting:**
-1. Check [existing issues](https://github.com/mirrorethic/claude-cognitive/issues)
+1. Check [existing issues](https://github.com/GMaN1911/claude-cognitive/issues)
 2. For features: Open issue first to discuss
 3. For bugs: Include context router + pool logs
 
@@ -346,8 +346,8 @@ python3 ~/.claude/scripts/pool-query.py --since 10m
 
 ---
 
-**Questions?** Open an [issue](https://github.com/mirrorethic/claude-cognitive/issues)
+**Questions?** Open an [issue](https://github.com/GMaN1911/claude-cognitive/issues)
 
-**Updates?** Watch the [repo](https://github.com/mirrorethic/claude-cognitive) for releases
+**Updates?** Watch the [repo](https://github.com/GMaN1911/claude-cognitive) for releases
 
 

@@ -182,6 +182,6 @@ Instance B now knows filtering is done, can work on pagination!
 
 ---
 
-**Part of:** [claude-cognitive](https://github.com/mirrorethic/claude-cognitive)
+**Part of:** [claude-cognitive](https://github.com/GMaN1911/claude-cognitive)
 
 **License:** MIT

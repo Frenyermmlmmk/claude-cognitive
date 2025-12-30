@@ -26,7 +26,7 @@
 
 ```bash
 cd ~
-git clone https://github.com/mirrorethic/claude-cognitive.git .claude-cognitive
+git clone https://github.com/GMaN1911/claude-cognitive.git .claude-cognitive
 ```
 
 ### Copy Scripts
@@ -479,7 +479,7 @@ chmod +x ~/.claude/scripts/*.py
 
 ## Get Help
 
-**Issues?** https://github.com/mirrorethic/claude-cognitive/issues
+**Issues?** https://github.com/GMaN1911/claude-cognitive/issues
 
 **Questions?** Open a discussion
 
