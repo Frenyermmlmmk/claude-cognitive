@@ -67,7 +67,7 @@ The router always knew which files were HOT/WARM/COLD. Now that knowledge persis
 
 ---
 
-## [1.0.0] - 2024-12-30
+## [1.0.0] - 2025-12-30
 
 ### Added
 - **Context Router v2.0**: Attention-based file injection with HOT/WARM/COLD tiers
@@ -117,13 +117,13 @@ The router always knew which files were HOT/WARM/COLD. Now that knowledge persis
 
 ## Development Milestones
 
-### Phase 0: Pre-Launch Prep (Dec 30, 2024)
+### Phase 0: Pre-Launch Prep (Dec 30, 2025)
 - ✅ Name selected: `claude-cognitive`
 - ✅ License chosen: MIT
 - ✅ Brand assets created (pitch, description)
 - ✅ Infrastructure validated on production system
 
-### Phase 1: Packaging (Dec 30, 2024 - In Progress)
+### Phase 1: Packaging (Dec 30, 2025 - In Progress)
 - ✅ Repository structure created
 - ✅ Core scripts extracted and documented
 - ✅ Templates created
@@ -180,7 +180,7 @@ The router always knew which files were HOT/WARM/COLD. Now that knowledge persis
 
 ## License
 
-MIT License - Copyright (c) 2024 Garret Sutherland, MirrorEthic LLC
+MIT License - Copyright (c) 2025 Garret Sutherland, MirrorEthic LLC
 
 See [LICENSE](./LICENSE) for full text.
 
