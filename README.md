@@ -116,7 +116,23 @@ claude
 python3 ~/.claude/scripts/pool-query.py --since 1h
 ```
 
+### 5. Customize Keywords (Optional, Recommended)
+
+**The scripts work immediately with MirrorBot example keywords** (50-70% savings).
+
+**For 80-95% savings:** Customize keywords to match your codebase.
+
+**Quick customization:**
+```bash
+# Edit the keyword section
+nano ~/.claude/scripts/context-router-v2.py
+
+# See full guide:
+cat ~/.claude-cognitive/CUSTOMIZATION.md
+```
+
 **Full setup guide:** [SETUP.md](./SETUP.md)
+**Customization guide:** [CUSTOMIZATION.md](./CUSTOMIZATION.md)
 
 ---
 

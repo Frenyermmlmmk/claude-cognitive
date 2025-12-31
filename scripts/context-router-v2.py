@@ -4,9 +4,19 @@ Attentional Context Router v2.0
 ================================
 Implements working memory dynamics for Claude Code context injection.
 
+⚠️  IMPORTANT: CUSTOMIZE FOR YOUR PROJECT ⚠️
+===============================================
+The KEYWORDS section (line 75) contains MirrorBot-specific examples.
+These work out-of-the-box but give BETTER results when customized.
+
+See CUSTOMIZATION.md for step-by-step guide.
+
+Quick: Works immediately with 50-70% savings
+Better: Customize keywords for 80-95% savings
+
 Architecture:
 - HOT (>0.8): Full file injection - active development
-- WARM (0.25-0.8): Header/summary only - background awareness  
+- WARM (0.25-0.8): Header/summary only - background awareness
 - COLD (<0.25): Evicted from context
 
 Features:
@@ -70,6 +80,18 @@ PINNED_FILES = [
 # ============================================================================
 # KEYWORD MAPPINGS
 # What words/phrases activate which files
+# ============================================================================
+# ⚠️  CUSTOMIZE THIS SECTION FOR YOUR PROJECT
+#
+# These are MirrorBot examples showing the pattern.
+# They'll work but aren't optimized for your codebase.
+#
+# For customization guide: See CUSTOMIZATION.md
+#
+# Pattern:
+#   "path/to/file.md": [
+#       "keyword1", "keyword2", "technical term", "common phrase"
+#   ]
 # ============================================================================
 
 KEYWORDS: Dict[str, List[str]] = {
