@@ -127,12 +127,58 @@ def format_pool_context(entries):
 
     return "\n".join(lines)
 
+def get_project_name():
+    """Detect project name from various sources."""
+    import subprocess
+
+    # Try 1: Git remote URL
+    try:
+        result = subprocess.run(
+            ["git", "config", "--get", "remote.origin.url"],
+            capture_output=True, text=True, timeout=1
+        )
+        if result.returncode == 0:
+            url = result.stdout.strip()
+            # Extract repo name from URL (handles both HTTPS and SSH)
+            # https://github.com/user/repo.git -> repo
+            # git@github.com:user/repo.git -> repo
+            if url:
+                name = url.rstrip("/").split("/")[-1].replace(".git", "")
+                if name:
+                    return name
+    except:
+        pass
+
+    # Try 2: Git repo root directory name
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", "--show-toplevel"],
+            capture_output=True, text=True, timeout=1
+        )
+        if result.returncode == 0:
+            repo_path = result.stdout.strip()
+            if repo_path:
+                name = os.path.basename(repo_path)
+                if name:
+                    return name
+    except:
+        pass
+
+    # Try 3: Current working directory name
+    cwd_name = os.path.basename(os.getcwd())
+    if cwd_name:
+        return cwd_name
+
+    # Fallback
+    return "Current Project"
+
 def format_compact_output():
     """Format compact output for SessionStart hook."""
     entries = load_recent_pool()
 
     if not entries:
-        return "## Session Context\n- **Codebase**: MirrorBot/CVMP\n- **Instance Pool**: No recent activity\n"
+        project_name = get_project_name()
+        return f"## Session Context\n- **Codebase**: {project_name}\n- **Instance Pool**: No recent activity\n"
 
     # Get counts
     instance_id = get_instance_id()
