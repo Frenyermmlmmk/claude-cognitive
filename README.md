@@ -87,7 +87,7 @@ cd /path/to/your/project
 mkdir -p .claude/{systems,modules,integrations,pool}
 
 # Copy templates
-cp ~/.claude-cognitive/templates/* .claude/
+cp -r ~/.claude-cognitive/templates/* .claude/
 
 # Edit .claude/CLAUDE.md with your project info
 # Edit .claude/systems/*.md to describe your architecture
