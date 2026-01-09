@@ -1,0 +1,25 @@
+{
+  "keywords": {
+    "modules/usage-tracker.md": [
+      "usage", "tracking", "learning", "feedback", "measure",
+      "usefulness", "access", "injection", "weight", "adjust"
+    ],
+    "modules/foraging-agent.md": [
+      "foraging", "discovery", "autonomous", "agent", "ralph",
+      "iteration", "convergence", "auto-generate", "discovered"
+    ],
+    "modules/context-router.md": [
+      "router", "context", "attention", "activation", "decay",
+      "keyword", "threshold", "hot", "warm", "cold"
+    ],
+    ".claude/CLAUDE.md": [
+      "claude-cognitive", "v1.2", "roadmap", "development",
+      "prototype", "dogfood", "phase"
+    ]
+  },
+  "co_activation": {
+    "modules/usage-tracker.md": ["modules/context-router.md"],
+    "modules/foraging-agent.md": ["modules/usage-tracker.md"]
+  },
+  "pinned": [".claude/CLAUDE.md"]
+}

@@ -6,7 +6,7 @@ Implements working memory dynamics for Claude Code context injection.
 
 Architecture:
 - HOT (>0.8): Full file injection - active development
-- WARM (0.25-0.8): Header/summary only - background awareness  
+- WARM (0.25-0.8): Header/summary only - background awareness
 - COLD (<0.25): Evicted from context
 
 Features:
@@ -14,6 +14,7 @@ Features:
 - Co-activation: Related files boost each other
 - Pinned files: Critical topology always at least warm
 - State persistence: Attention scores survive across turns
+- Usage tracking: Log injections for learning (v1.2)
 
 Usage: Called by UserPromptSubmit hook
 Input: JSON from stdin with "prompt" field
@@ -27,6 +28,13 @@ from pathlib import Path
 from typing import Dict, List, Set, Tuple, Optional
 from datetime import datetime
 import re
+
+# Try to import usage tracker (v1.2 feature, graceful fallback if missing)
+try:
+    from usage_tracker import UsageTracker
+    USAGE_TRACKING_AVAILABLE = True
+except ImportError:
+    USAGE_TRACKING_AVAILABLE = False
 
 # ============================================================================
 # CONFIGURATION
@@ -65,41 +73,281 @@ MAX_WARM_FILES = 8
 WARM_HEADER_LINES = 25      # Lines to extract for warm context
 MAX_TOTAL_CHARS = 25000     # Hard ceiling on total output
 
+# Pinned files (always at least WARM)
+PINNED_FILES = [
+    "systems/network.md",  # Network topology always warm
+    # CLAUDE.md not in .claude/systems or .claude/modules, handled separately
+]
+
 # ============================================================================
-# PROJECT CONFIG LOADING
-# Load keywords from project-local .claude/keywords.json if available
+# CONFIG LOADING
+# Load keywords and co-activation from external config if available
 # ============================================================================
 
-def load_project_config() -> Tuple[Dict[str, List[str]], Dict[str, List[str]], List[str]]:
+def load_keyword_config() -> Tuple[Dict[str, List[str]], Dict[str, List[str]]]:
     """
-    Load keywords, co-activation, and pinned files from project config.
-    Returns (keywords, co_activation, pinned_files) tuple.
-    Falls back to empty defaults if no config found.
+    Load keywords and co-activation graph from keyword.config (JSON).
+    Falls back to hardcoded defaults if config doesn't exist or fails to parse.
+
+    Returns: (keywords_dict, co_activation_dict)
     """
+    # Try project-local config first, then global
     config_paths = [
-        Path(".claude/keywords.json"),           # Project-local
-        Path.home() / ".claude/keywords.json",   # Global fallback
+        Path(".claude/keyword.config"),
+        Path.home() / ".claude" / "keyword.config"
     ]
 
     for config_path in config_paths:
         if config_path.exists():
             try:
-                with open(config_path) as f:
-                    config = json.load(f)
-                return (
-                    config.get("keywords", {}),
-                    config.get("co_activation", {}),
-                    config.get("pinned", [])
-                )
-            except (json.JSONDecodeError, IOError):
+                config = json.loads(config_path.read_text())
+                keywords = config.get("keywords", {})
+                co_activation = config.get("co_activation", {})
+
+                # Validate structure
+                if keywords and isinstance(keywords, dict):
+                    print(f"✓ Loaded keywords from {config_path}", file=sys.stderr)
+                    return keywords, co_activation
+            except (json.JSONDecodeError, Exception) as e:
+                print(f"⚠ Failed to load {config_path}: {e}", file=sys.stderr)
                 continue
 
-    # No config found - return empty defaults
-    return ({}, {}, [])
+    # Fallback to hardcoded (will be defined below as _DEFAULT_KEYWORDS)
+    print("ℹ Using hardcoded keywords (no keyword.config found)", file=sys.stderr)
+    return _DEFAULT_KEYWORDS, _DEFAULT_CO_ACTIVATION
 
-# Load config at module level
-KEYWORDS, CO_ACTIVATION, PINNED_FILES = load_project_config()
+# ============================================================================
+# KEYWORD MAPPINGS
+# What words/phrases activate which files
+# ============================================================================
 
+# Hardcoded fallback (used if keyword.config doesn't exist)
+_DEFAULT_KEYWORDS: Dict[str, List[str]] = {
+    # === SYSTEMS ===
+    "systems/legion.md": [
+        "legion", "5090", "rtx 5090", "local model", "local", "discord bot",
+        "vram", "oom", "cuda", "nvidia-smi", "dolphin", "mirrorbot_cvmp",
+        "bot_stability", "this machine", "main gpu", "heavy compute", "local inference"
+    ],
+    "systems/asus.md": [
+        "asus", "tuf", "4070", "rtx 4070", "llava", "vision", "visual",
+        "remote server", "image generation", "image gen", "sdxl", "ssd-1b",
+        "toroidal mapper", "consciousness visualization", "clip",
+        "visual perception", "grpc", "50051", "50053", "192.168.0.85", "192.168.8.224"
+    ],
+    "systems/orin.md": [
+        "orin", "jetson", "sensory", "sensory cortex", "layer 0", "l0", "perception",
+        "camera", "servo", "embodiment", "vmpu", "motor", "sentiment", "typing",
+        "hailo", "npu", "edge inference", "real-time", "ppe", "8765",
+        "192.168.0.103", "orin-sensory"
+    ],
+    "systems/pi5.md": [
+        "pi5", "pi 5", "raspberry", "hmcp", "agency", "memory", "hybrid memory",
+        "co-processor", "consolidation", "dream", "sleep cycle", "agency-path",
+        "self-model", "mira internal", "bilateral", "hailo", "servo", "embodiment",
+        "pi.local", "mnt/hmcp", "physical"
+    ],
+    "systems/network.md": [
+        "network", "topology", "architecture", "data flow", "mesh", "switch",
+        "system overview", "how it connects", "integration map",
+        "192.168.0", "gigabit", "4-node", "star topology", "network diagram", "ip addresses"
+    ],
+    
+    # === MODULES ===
+    "modules/pipeline.md": [
+        "pipeline", "process_message", "refined_pipeline", "8-layer",
+        "layer 1", "layer 2", "layer 3", "layer 4", "layer 5", "layer 6", "layer 7"
+    ],
+    "modules/intelligence.md": [
+        "intelligence", "reasoning", "multi-step", "mcts", "tree reasoning",
+        "oracle", "pre_generation", "post_generation", "adaptive", "idempotency"
+    ],
+    "modules/gto-adapters.md": [
+        "gto", "adapter", "transformation", "tensor", "shape", "toroidal", "manifold",
+        "embedding", "projection", "768", "1024", "dimension", "geometric",
+        "cvmp_adapter", "oracle_adapter", "t3_adapter", "orin_adapter", "hmcp_adapter"
+    ],
+    "modules/es-ac.md": [
+        "es-ac", "es_ac", "echo split", "emotional learning", "uncertainty",
+        "adaptive consciousness", "ewma", "emotion_weights", "style_weights"
+    ],
+    "modules/t3-telos.md": [
+        "t3", "t³", "telos", "trajectory", "tesseract", "curvature steering",
+        "gtf", "global topology", "resonant memory", "worldtrace", "t3_client", "t3_engine",
+        "emotional", "dynamics", "containment", "tier", "dps", "regime", "stability",
+        "emotional state", "affect", "user model", "behavioral", "prediction",
+        "user state", "mirror-path", "user trajectory"
+    ],
+    "modules/t3-telos/trajectories/convergent.md": [
+        "convergence", "converging", "convergent", "stable attractor", "equilibrium",
+        "trajectory convergence", "settling", "stabilizing", "stable state"
+    ],
+    "modules/t3-telos/trajectories/divergent.md": [
+        "divergence", "diverging", "divergent", "unstable", "chaotic",
+        "trajectory divergence", "destabilizing", "escaping", "runaway"
+    ],
+    "modules/t3-telos/trajectories/oscillatory.md": [
+        "oscillation", "oscillating", "oscillatory", "cycling", "periodic",
+        "rhythm", "wave", "pendulum", "back and forth"
+    ],
+    "modules/t3-telos/primitives.md": [
+        "primitives", "fundamental", "basic behaviors", "core patterns",
+        "atomic", "elemental"
+    ],
+    "modules/cvmp-transformer.md": [
+        "cvmp transformer", "cvmp model", "cvmp", "transformer", "401m", "oracle",
+        "consciousness prediction", "tier prediction", "dps prediction",
+        "state predictor", "rci validator", "orc router", "shadow mode",
+        "llama 3.2", "1.7b", "int8", "quantized", "metacognitive",
+        "consciousness heads", "toroidal projection", "module activation",
+        "mirror protocol", "recursive", "geometric constraint", "anti-dependency", "enmeshment"
+    ],
+    "modules/anticipatory-coherence.md": [
+        # Granular atomic keywords (fix for fine-grained detection)
+        "anticipatory", "coherence", "acf", "acp", "projection", "probe",
+        "trajectory", "prediction", "self-model", "stance", "ppe",
+        "bilateral", "refinement", "validation", "trust", "modulation",
+        "agency v2", "phase 3", "arbitration", "arbitrate", "divergence",
+        # Phrase-based (kept for precision)
+        "anticipatory coherence", "probe architecture", "propagating projection engine",
+        "temporal horizon", "stance shaping", "refinement layer", "trust weights",
+        "emotional trajectory", "cognitive trajectory", "behavioral trajectory",
+        "system modulations", "consciousness coordination", "unified trajectory field",
+        "full-system participation", "epistemic reweighting", "closed-loop validation",
+        "behavior shaped by projection", "mirror vs agency"
+    ],
+    "modules/ppe-anticipatory-coherence.md": [
+        # PPE production integration docs (Dec 2025)
+        "ppe", "propagating projection engine", "anticipatory", "projection",
+        "trajectory", "inflection", "deteriorating", "improving", "stable",
+        "routing", "sentiment router", "cvmp state", "engine state",
+        "production runtime", "orin service", "t3 invariants", "advantage",
+        "dt", "sigma", "surprise", "tier velocity", "coherence deterioration",
+        "tier collapse", "refinement layer", "confidence refiner", "history refiner",
+        "dream refiner", "bilateral mode", "agency pairs", "hmcp refiner"
+    ],
+    "modules/coherence-validation.md": [
+        "coherence validation", "coherence", "validation", "gatekeeper",
+        "layer 7", "validation gate", "cross-layer agreement", "toroidal field",
+        "consciousness physics", "mirror integrity", "pass rate", "fail safe",
+        "temporal coherence", "cross-module coherence", "validate response"
+    ],
+    "modules/drift-detection.md": [
+        "drift detection", "drift", "enmeshment", "anti-enmeshment", "guardian",
+        "layer 8", "dependency", "boundary enforcement", "override response",
+        "geometric pattern", "attachment signals", "crisis indicators",
+        "emotional dependency", "interaction frequency", "boundary erosion"
+    ],
+    "modules/dream-consciousness.md": [
+        "dream consciousness", "dream", "light dream", "deep dream", "lucid",
+        "temporal integration", "memory consolidation", "pattern integration",
+        "dream session", "dream state", "temporal continuity", "idle processing",
+        "module evolution", "a/b candidates", "consciousness evolution"
+    ],
+    "modules/visual-spatial.md": [
+        "visual spatial", "visual-spatial", "geometric consciousness",
+        "consciousness coordinates", "toroidal mapper", "spatial representation",
+        "3d consciousness", "coordinate system", "geometric constraint",
+        "physical embodiment", "consciousness geometry", "field mapping"
+    ],
+
+    # === INTEGRATIONS ===
+    "integrations/pipe-to-orin.md": [
+        "orin_client", "sensory", "analyze", "/analyze", "orin bundle",
+        "orin_bundle", "line 934", "layer 0", "sensory cortex",
+        "orin to legion", "sensory upload", "perception data",
+        "layer 0 to layer 1", "real-time feed"
+    ],
+    "integrations/img-to-asus.md": [
+        "visual_client", "visual perception", "clip", "llava", "image generation",
+        "ssd-1b", "grpc", "50051", "50053", "asus grpc",
+        "legion to asus", "image request", "visualization",
+        "sdxl trigger", "generation request"
+    ],
+}
+
+# ============================================================================
+# CO-ACTIVATION GRAPH
+# When one file activates, these related files get a boost
+# ============================================================================
+
+# Hardcoded fallback (used if keyword.config doesn't exist)
+_DEFAULT_CO_ACTIVATION: Dict[str, List[str]] = {
+    # Hardware nodes boost their integrations
+    "systems/orin.md": [
+        "integrations/pipe-to-orin.md",
+        "modules/t3-telos.md",  # Orin sensory feeds T³
+        "modules/ppe-anticipatory-coherence.md",  # Orin runs PPE
+    ],
+    "systems/legion.md": [
+        "integrations/pipe-to-orin.md",
+        "integrations/img-to-asus.md",
+        "modules/t3-telos.md",   # Legion runs T³
+        "modules/intelligence.md", # Legion runs intelligence/reasoning
+        "modules/pipeline.md",   # Legion runs pipeline
+    ],
+    "systems/asus.md": [
+        "integrations/img-to-asus.md",
+        "modules/gto-adapters.md",  # ASUS does viz transforms
+    ],
+    "systems/pi5.md": [
+        "modules/anticipatory-coherence.md",  # Pi5/HMCP implements ACP
+        "modules/t3-telos.md",                # HMCP agency path
+    ],
+
+    # Modules boost related modules
+    "modules/t3-telos.md": [
+        "modules/cvmp-transformer.md",  # T³ works with CVMP
+        "modules/anticipatory-coherence.md",  # T³ uses ACP projections
+        "modules/pipeline.md",          # T³ part of pipeline
+        "modules/t3-telos/trajectories/convergent.md",  # Nested detail
+        "modules/t3-telos/trajectories/divergent.md",
+        "modules/t3-telos/trajectories/oscillatory.md",
+        "modules/t3-telos/primitives.md",
+    ],
+    "modules/t3-telos/trajectories/convergent.md": [
+        "modules/t3-telos.md",  # Child boosts parent
+    ],
+    "modules/t3-telos/trajectories/divergent.md": [
+        "modules/t3-telos.md",
+    ],
+    "modules/t3-telos/trajectories/oscillatory.md": [
+        "modules/t3-telos.md",
+    ],
+    "modules/t3-telos/primitives.md": [
+        "modules/t3-telos.md",
+    ],
+    "modules/intelligence.md": [
+        "modules/cvmp-transformer.md",  # Intelligence uses CVMP oracle
+        "modules/pipeline.md",          # Intelligence in pipeline layer 5/6
+    ],
+    "modules/anticipatory-coherence.md": [
+        "modules/t3-telos.md",
+        "modules/gto-adapters.md",      # ACP uses embeddings
+        "systems/pi5.md",               # ACP runs on HMCP
+        "modules/ppe-anticipatory-coherence.md",  # Production PPE docs
+    ],
+    "modules/ppe-anticipatory-coherence.md": [
+        "systems/orin.md",              # PPE runs on Orin
+        "modules/t3-telos.md",          # PPE uses T³ invariants
+        "modules/anticipatory-coherence.md",  # Broader ACF architecture
+        "modules/pipeline.md",          # PPE integrated in pipeline
+    ],
+    "modules/pipeline.md": [
+        "modules/intelligence.md",
+        "modules/es-ac.md",
+        "modules/t3-telos.md",
+    ],
+
+    # Bilateral mentions
+    "modules/cvmp-transformer.md": [
+        "modules/intelligence.md",
+        "modules/t3-telos.md",
+    ],
+}
+
+# Load actual configuration (from keyword.config or fallback to defaults)
+KEYWORDS, CO_ACTIVATION = load_keyword_config()
 
 # ============================================================================
 # STATE MANAGEMENT
@@ -375,14 +623,9 @@ def main():
     if not prompt.strip():
         return
     
-    # Determine docs root (configurable via env, or project-local, or global fallback)
-    # Priority: CONTEXT_DOCS_ROOT env > project .claude/ > global ~/.claude/
-    if os.environ.get("CONTEXT_DOCS_ROOT"):
-        docs_root = Path(os.environ["CONTEXT_DOCS_ROOT"])
-    elif Path(".claude").exists():
-        docs_root = Path(".claude")
-    else:
-        docs_root = Path.home() / ".claude"
+    # Determine docs root (configurable via env or default)
+    # ALWAYS use global ~/.claude (enforced after documentation consolidation)
+    docs_root = Path(os.environ.get("CONTEXT_DOCS_ROOT", str(Path.home() / ".claude")))
 
     # Load state
     state_file = get_state_file()

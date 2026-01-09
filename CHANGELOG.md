@@ -9,14 +9,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
+---
+
+## [1.1.2] - 2026-01-08 (Development Preview)
+
+⚠️ **This is a development preview release** - v1.2 Phase 1 features are experimental
+
+### Added - v1.2 Development (Experimental)
+- **Usage Tracking System** (⚠️ Preview/Observation Mode):
+  - `scripts/usage_tracker.py` - Core tracking logic with Ralph Loop learning pattern
+  - `scripts/usage-track-stop.py` - Stop hook integration for post-turn analysis
+  - `scripts/add-usage-tracking-hook.py` - Hook installer utility
+  - Tracks which `.claude/*.md` files are injected vs actually used
+  - Maps documentation to source code relationships
+  - Calculates usefulness scores (0.0 to 1.0) per file
+  - Auto-adjusts keyword weights after 50 turns (learning mode)
+  - Generates: `.claude/usage_stats.json`, `.claude/usage_history.jsonl`, `.claude/keyword_weights.json`
+
+- **v1.2 Architecture Documentation** (4000+ lines):
+  - `V1.2_INTELLIGENCE_ROADMAP.md` - Complete 4-phase roadmap
+  - `RALPH_LOOP_INSIGHTS.md` - Design philosophy (700+ lines)
+  - `.claude/modules/usage-tracker.md` - Tracking system design (850+ lines)
+  - `.claude/modules/foraging-agent.md` - Discovery agent design (900+ lines)
+  - `.claude/modules/doc-refiner-agent.md` - Maintenance agent design (700+ lines)
+  - `.claude/modules/unified-agent-architecture.md` - Combined architecture (500+ lines)
+  - `V1.2_PHASE1_PROGRESS.md` - Phase 1 progress report
+  - `INTEGRATION_PROGRESS.md` - Integration status and metrics
+  - `SESSION_SUMMARY.md` - Latest development session notes
+
+### Changed - v1.2 Integration
+- **`scripts/context-router-v2.py`**:
+  - Added usage tracker integration (injection logging)
+  - Added learned keyword weight loading from `.claude/keyword_weights.json`
+  - Applies learned weights during attention calculation
+  - Graceful fallback if tracker unavailable
+- **`~/.claude/settings.json`** (via installer):
+  - Added `usage-track-stop.py` to Stop hooks array
+  - Runs automatically after each conversation turn
+
+### Added - v1.1.2 Stable Features
 - **Project-local keyword configuration**: Keywords, co-activation, and pinned files now load from `.claude/keywords.json` instead of being hardcoded in the script
   - Config lookup order: project `.claude/keywords.json` > global `~/.claude/keywords.json` > empty defaults
   - Added `load_project_config()` function in `context-router-v2.py`
   - Added `templates/keywords.json.example` template file
   - Added example `keywords.json` to small-project example
 
-### Changed
+### Changed - v1.1.2 Stable Features
 - **docs_root resolution**: Now prefers project-local `.claude/` directory over global `~/.claude/`
   - Priority: `CONTEXT_DOCS_ROOT` env > project `.claude/` > global `~/.claude/`
 - Updated all documentation to reference `.claude/keywords.json` instead of editing the Python script
@@ -28,6 +66,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 - Hardcoded MirrorBot-specific keywords, co-activation rules, and pinned files from `context-router-v2.py` (~220 lines)
+
+### Experimental
+All usage tracking features are marked as experimental/preview:
+- Infrastructure is complete and functional
+- Currently in observation/data collection phase
+- Learning mode activates automatically after 50 turns
+- Validation pending with real usage data
+- Can be disabled by removing stop hook
+
+### Design Philosophy: Ralph Loop
+This release embodies the **Ralph Loop pattern**: Iterate → Measure → Learn → Refine → Repeat
+- Build foundation, observe real usage, learn from data, iterate
+- Not "design perfect system then implement"
+- Adaptive intelligence through iteration, not one-shot optimization
 
 ---
 

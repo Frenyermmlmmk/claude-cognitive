@@ -28,6 +28,12 @@ Thumbs.db
 .claude/attn_state.json
 .claude/pool/instance_state.jsonl
 
+# Usage tracking data files (generated, not tracked)
+.claude/usage_stats.json
+.claude/usage_history.jsonl
+.claude/keyword_weights.json
+.claude/learning_progress.txt
+
 # Logs
 *.log
 
