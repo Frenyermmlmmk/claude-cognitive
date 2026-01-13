@@ -27,12 +27,18 @@ Thumbs.db
 # Claude-specific state files (project-local, not tracked)
 .claude/attn_state.json
 .claude/pool/instance_state.jsonl
+.claude-dev/attn_state.json
+.claude-dev/pool/instance_state.jsonl
 
 # Usage tracking data files (generated, not tracked)
 .claude/usage_stats.json
 .claude/usage_history.jsonl
 .claude/keyword_weights.json
 .claude/learning_progress.txt
+.claude-dev/usage_stats.json
+.claude-dev/usage_history.jsonl
+.claude-dev/keyword_weights.json
+.claude-dev/learning_progress.txt
 
 # Logs
 *.log

@@ -156,15 +156,15 @@ PINNED_FILES = [
 
 def load_keyword_config() -> Tuple[Dict[str, List[str]], Dict[str, List[str]]]:
     """
-    Load keywords and co-activation graph from keyword.config (JSON).
+    Load keywords and co-activation graph from keywords.json (JSON).
     Falls back to hardcoded defaults if config doesn't exist or fails to parse.
 
     Returns: (keywords_dict, co_activation_dict)
     """
     # Try project-local config first, then global
     config_paths = [
-        Path(".claude/keyword.config"),
-        Path.home() / ".claude" / "keyword.config"
+        Path(".claude/keywords.json"),
+        Path.home() / ".claude" / "keywords.json"
     ]
 
     for config_path in config_paths:
@@ -183,7 +183,7 @@ def load_keyword_config() -> Tuple[Dict[str, List[str]], Dict[str, List[str]]]:
                 continue
 
     # Fallback to hardcoded (will be defined below as _DEFAULT_KEYWORDS)
-    print("ℹ Using hardcoded keywords (no keyword.config found)", file=sys.stderr)
+    print("ℹ Using hardcoded keywords (no keywords.json found)", file=sys.stderr)
     return _DEFAULT_KEYWORDS, _DEFAULT_CO_ACTIVATION
 
 # ============================================================================
@@ -191,7 +191,7 @@ def load_keyword_config() -> Tuple[Dict[str, List[str]], Dict[str, List[str]]]:
 # What words/phrases activate which files
 # ============================================================================
 
-# Hardcoded fallback (used if keyword.config doesn't exist)
+# Hardcoded fallback (used if keywords.json doesn't exist)
 _DEFAULT_KEYWORDS: Dict[str, List[str]] = {
     # === SYSTEMS ===
     "systems/legion.md": [
@@ -341,7 +341,7 @@ _DEFAULT_KEYWORDS: Dict[str, List[str]] = {
 # When one file activates, these related files get a boost
 # ============================================================================
 
-# Hardcoded fallback (used if keyword.config doesn't exist)
+# Hardcoded fallback (used if keywords.json doesn't exist)
 _DEFAULT_CO_ACTIVATION: Dict[str, List[str]] = {
     # Hardware nodes boost their integrations
     "systems/orin.md": [
@@ -416,7 +416,7 @@ _DEFAULT_CO_ACTIVATION: Dict[str, List[str]] = {
     ],
 }
 
-# Load actual configuration (from keyword.config or fallback to defaults)
+# Load actual configuration (from keywords.json or fallback to defaults)
 KEYWORDS, CO_ACTIVATION = load_keyword_config()
 
 # ============================================================================
