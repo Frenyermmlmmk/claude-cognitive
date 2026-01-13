@@ -11,6 +11,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.2.1] - 2026-01-12
+
+### 🐛 Bug Fixes
+
+#### Critical: docs_root Resolution Priority Bug (Issue #9)
+**Problem**: Users seeing wrong documentation files (global ~/.claude/ instead of project-local .claude/)
+
+**Root Cause**: `context-router-v2.py` was not checking project-local `.claude/` directory, only:
+1. CONTEXT_DOCS_ROOT env var
+2. Global ~/.claude/ (fallback)
+
+This caused users to load documentation from the global directory (which may contain unrelated project docs) instead of their project-specific documentation.
+
+**Fix**: Implemented proper 3-tier priority order:
+1. **CONTEXT_DOCS_ROOT environment variable** (explicit override)
+2. **Project-local .claude/ directory** (if exists with .md files) ← **NEW**
+3. **Global ~/.claude/ directory** (fallback)
+
+**Impact**:
+- ✅ Project-local docs now correctly take priority over global
+- ✅ Explicit validation: Checks for .md files, not just directory existence
+- ✅ Helpful error messages if no docs found
+- ✅ Debug output shows which docs_root was chosen
+
+**User Action Required**: None - automatic fix
+- If you were using `export CONTEXT_DOCS_ROOT=.claude` workaround, you can now remove it
+- Project-local `.claude/` will be automatically detected
+
+**Files Modified**:
+- `scripts/context-router-v2.py`: Added `resolve_docs_root()` function with proper priority logic
+
+### 📝 Changes
+
+#### Added
+- `resolve_docs_root()` function with explicit priority order
+- Content validation (checks for .md files, not just directory existence)
+- Debug output to stderr showing which docs_root was chosen
+- Helpful error message if no documentation found
+
+#### Fixed
+- Project-local .claude/ now correctly prioritized over global ~/.claude/
+- Prevents accidental loading of wrong project's documentation
+- Fixes Issue #9 (users seeing MirrorBot CVMP docs instead of their own)
+
+---
+
 ## [1.2.0] - 2026-01-12 (Phase 1 Complete - Usage Tracking)
 
 ✅ **Phase 1 of v1.2 Intelligence Roadmap is complete**
