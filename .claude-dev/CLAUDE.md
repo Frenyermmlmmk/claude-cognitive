@@ -15,7 +15,7 @@
 - ✅ Created V1.2_INTELLIGENCE_ROADMAP.md (comprehensive plan)
 - ✅ Created RALPH_LOOP_INSIGHTS.md (philosophical foundation)
 - ✅ Integrated Ralph Loop pattern into roadmap
-- 🔄 Setting up project-local .claude/ for dogfooding
+- 🔄 Setting up project-local .claude-dev/ for dogfooding (development only)
 - ⏭️ Next: Prototype usage-tracker.py
 
 ---
@@ -34,7 +34,7 @@ claude-cognitive-package/
 │   ├── predictor.py                 # [v1.2] PROTOTYPE - Sequence learning
 │   └── forage.py                    # [v1.2] PROTOTYPE - Ralph Loop foraging
 │
-├── .claude/                          # PROJECT-LOCAL context (this directory)
+├── .claude-dev/                      # DEV-ONLY context (dogfooding, NOT for users)
 │   ├── CLAUDE.md                    # This file
 │   ├── modules/                     # claude-cognitive components
 │   │   ├── context-router.md        # Router internals
@@ -77,24 +77,24 @@ claude-cognitive-package/
 
 ### **Usage Tracking (Phase 1)**
 Auto-activates:
-- `.claude/modules/usage-tracker.md`
-- `.claude/modules/context-router.md` (integration points)
+- `.claude-dev/modules/usage-tracker.md`
+- `.claude-dev/modules/context-router.md` (integration points)
 
 ### **Foraging Agent (Phase 4)**
 Auto-activates:
-- `.claude/modules/foraging-agent.md`
+- `.claude-dev/modules/foraging-agent.md`
 - `RALPH_LOOP_INSIGHTS.md`
-- `.claude/modules/usage-tracker.md` (feedback loop)
+- `.claude-dev/modules/usage-tracker.md` (feedback loop)
 
 ### **Semantic Matching (Phase 2)**
 Auto-activates:
-- `.claude/modules/semantic-matcher.md`
-- `.claude/modules/context-router.md`
+- `.claude-dev/modules/semantic-matcher.md`
+- `.claude-dev/modules/context-router.md`
 
 ### **Pool System**
 Auto-activates:
-- `.claude/modules/pool-coordinator.md`
-- `.claude/integrations/claude-code-hooks.md`
+- `.claude-dev/modules/pool-coordinator.md`
+- `.claude-dev/integrations/claude-code-hooks.md`
 
 ---
 
@@ -116,7 +116,7 @@ cd /home/garret-sutherland/claude-cognitive-package/
 python scripts/usage-tracker.py --test
 
 # Check if it tracks attention state correctly
-cat .claude/attn_state.json
+cat .claude-dev/attn_state.json
 ```
 
 **3. Measure Impact:**
@@ -180,11 +180,11 @@ cat .claude/attn_state.json
 - `README.md` - Public docs
 - `CHANGELOG.md` - Version history
 
-**Context Docs**:
-- `.claude/modules/context-router.md` - Router internals
-- `.claude/modules/usage-tracker.md` - Usage learning (v1.2)
-- `.claude/modules/foraging-agent.md` - Ralph Loop agent (v1.2)
-- `.claude/modules/pool-coordinator.md` - Pool system
+**Context Docs** (Development):
+- `.claude-dev/modules/context-router.md` - Router internals
+- `.claude-dev/modules/usage-tracker.md` - Usage learning (v1.2)
+- `.claude-dev/modules/foraging-agent.md` - Ralph Loop agent (v1.2)
+- `.claude-dev/modules/pool-coordinator.md` - Pool system
 
 **Global Installation**:
 - `~/.claude/scripts/` - v1.1 production scripts (LIVE)
@@ -196,7 +196,7 @@ cat .claude/attn_state.json
 ## Next Steps
 
 **Immediate (Today)**:
-1. Create `.claude/modules/*.md` files for v1.2 components
+1. Create `.claude-dev/modules/*.md` files for v1.2 components
 2. Start prototyping `usage-tracker.py`
 3. Test on this project (dogfood)
 

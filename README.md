@@ -78,6 +78,8 @@ cp -r .claude-cognitive/scripts ~/.claude/scripts/
 cat .claude-cognitive/hooks-config.json >> ~/.claude/settings.json
 ```
 
+> **Note:** The repo contains a `.claude-dev/` directory for development/dogfooding purposes only. **Do not** copy this to your projects—it's not part of the user-facing installation. Use your own project-local `.claude/` directory instead (see step 2).
+
 ### 2. Initialize Your Project
 
 ```bash
